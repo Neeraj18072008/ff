@@ -3,3 +3,4 @@ qrcode>=7.4
 pillow>=10.0
 gunicorn>=21.2
 tzdata>=2024.1
+psycopg[binary]>=3.2
