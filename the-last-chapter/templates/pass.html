@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% block title %}pass {{ p.code }} · the last chapter{% endblock %}
+
+{% block body %}
+<main class="section page pass-page" id="main">
+  <div class="wrap narrow">
+
+    {% if fresh %}
+    <div class="banner glass" data-reveal>
+      <p class="banner-title display">{{ "YOU'RE IN." }}</p>
+      <p class="mut">this is your digital pass — screenshot it or save the link.</p>
+    </div>
+    {% endif %}
+
+    <div class="passcard {{ 'is-used' if p.entry == 'used' }}" data-reveal aria-label="event pass">
+      <p class="pc-head display">THE LAST CHAPTER</p>
+      <div class="pc-emblem">
+        <img src="{{ url_for('static', filename='img/panther-pass.jpg') }}" alt="panther emblem">
+      </div>
+      <p class="pc-code-label kicker">pass code</p>
+      <p class="pc-code display">{{ p.code }}</p>
+
+      {% if p.type == 'couple' %}
+      <div class="pc-names two">
+        <div><p class="kicker">person 01</p><p class="pc-name">{{ p.p1 }}</p></div>
+        <div><p class="kicker">person 02</p><p class="pc-name">{{ p.p2 }}</p></div>
+      </div>
+      {% else %}
+      <p class="pc-name solo">{{ p.p1 }}</p>
+      {% endif %}
+
+      <p class="pc-type display">{{ 'COUPLE PASS' if p.type == 'couple' else 'SINGLE PASS' }}</p>
+
+      <div class="pc-meta">
+        <p class="mono">{{ EVENT.date_long }}</p>
+        <p>{{ EVENT.venue }} • {{ EVENT.venue_sub }}</p>
+        <p class="mono">{{ EVENT.time_short }}</p>
+      </div>
+
+      <p class="chip {{ p.pay_status }}">{{ p.pay_label }}{% if p.pay_status != 'paid' %} · {{ 'upi' if p.method == 'upi' else 'cash' }}{% endif %}</p>
+
+      {% if p.entry == 'used' %}
+      <div class="stamp display">USED</div>
+      {% endif %}
+
+      <div class="pc-bars" aria-hidden="true"></div>
+    </div>
+
+    <p class="mut small center">show this code at the entry desk — it works once.</p>
+
+    <div class="pass-actions">
+      <a class="btn ghost" href="javascript:void(0)" data-share="{{ share_url }}">share pass</a>
+      <a class="btn ghost" href="javascript:void(0)" data-copy="{{ share_url }}">copy link</a>
+    </div>
+
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pass.js') }}" defer></script>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% block title %}book your pass · the last chapter{% endblock %}
+
+{% block body %}
+<main class="section page" id="main">
+  <div class="wrap">
+
+    <p class="kicker">🎟 booking</p>
+    <h1 class="page-title">book your pass</h1>
+
+    <ol class="steps" id="steps">
+      <li class="on" data-step-ind="1"><span>01</span> pass</li>
+      <li data-step-ind="2"><span>02</span> details</li>
+      <li data-step-ind="3"><span>03</span> payment</li>
+    </ol>
+
+    {% if errors %}
+    <div class="form-note err" role="alert">fix the highlighted fields and try again.</div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('book_page') }}" id="bookForm" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- step 1 · pass type -->
+      <fieldset class="fstep on" data-step="1">
+        <legend>choose your pass</legend>
+        <div class="pass-grid">
+          <label class="pass-card {{ 'sel' if (v.pass_type or pre) == 'single' }}">
+            <input type="radio" name="pass_type" value="single"
+                   {{ 'checked' if (v.pass_type or pre) == 'single' }}>
+            <span class="pc-top"><span class="pc-name display">SINGLE</span>
+            <span class="pc-for">for one person</span></span>
+            <span class="pc-price display" data-price="single">₹{{ settings.price_single }}</span>
+          </label>
+          <label class="pass-card {{ 'sel' if (v.pass_type or pre) == 'couple' }}">
+            <input type="radio" name="pass_type" value="couple"
+                   {{ 'checked' if (v.pass_type or pre) == 'couple' }}>
+            <span class="pc-top"><span class="pc-name display">COUPLE</span>
+            <span class="pc-for">for two people</span></span>
+            <span class="pc-price display" data-price="couple">₹{{ settings.price_couple }}</span>
+          </label>
+        </div>
+        {% if errors.pass_type %}<p class="f-err">{{ errors.pass_type }}</p>{% endif %}
+        <button type="button" class="btn wide" data-next>continue <span aria-hidden="true">→</span></button>
+      </fieldset>
+
+      <!-- step 2 · details -->
+      <fieldset class="fstep" data-step="2">
+        <legend>your details</legend>
+
+        <div class="person-block">
+          <p class="pb-title">{{ 'person 01' if v.pass_type == 'couple' or pre == 'couple' else 'your details' }}</p>
+          <div class="field {{ 'bad' if errors.p1_name }}">
+            <label for="p1_name">full name</label>
+            <input id="p1_name" name="p1_name" type="text" autocomplete="name"
+                   value="{{ v.p1_name or '' }}" placeholder="e.g. neeraj chouhan">
+            {% if errors.p1_name %}<p class="f-err">{{ errors.p1_name }}</p>{% endif %}
+          </div>
+          <div class="field {{ 'bad' if errors.p1_dob }}">
+            <label for="p1_dob">date of birth</label>
+            <input id="p1_dob" name="p1_dob" type="date" value="{{ v.p1_dob or '' }}"
+                   min="1985-01-01" max="2016-12-31">
+            {% if errors.p1_dob %}<p class="f-err">{{ errors.p1_dob }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="person-block couple-only" id="coupleBlock">
+          <p class="pb-title">person 02</p>
+          <div class="field {{ 'bad' if errors.p2_name }}">
+            <label for="p2_name">full name</label>
+            <input id="p2_name" name="p2_name" type="text" autocomplete="off"
+                   value="{{ v.p2_name or '' }}" placeholder="their full name">
+            {% if errors.p2_name %}<p class="f-err">{{ errors.p2_name }}</p>{% endif %}
+          </div>
+          <div class="field {{ 'bad' if errors.p2_dob }}">
+            <label for="p2_dob">date of birth</label>
+            <input id="p2_dob" name="p2_dob" type="date" value="{{ v.p2_dob or '' }}"
+                   min="1985-01-01" max="2016-12-31">
+            {% if errors.p2_dob %}<p class="f-err">{{ errors.p2_dob }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="field {{ 'bad' if errors.contact }}">
+          <label for="contact">contact number</label>
+          <input id="contact" name="contact" type="tel" inputmode="numeric" maxlength="10"
+                 autocomplete="tel" value="{{ v.contact or '' }}" placeholder="10-digit mobile number">
+          <p class="hint">one number for the whole booking — updates go here.</p>
+          {% if errors.contact %}<p class="f-err">{{ errors.contact }}</p>{% endif %}
+        </div>
+
+        <div class="wnav">
+          <button type="button" class="btn ghost" data-back>← back</button>
+          <button type="button" class="btn" data-next>continue <span aria-hidden="true">→</span></button>
+        </div>
+      </fieldset>
+
+      <!-- step 3 · payment -->
+      <fieldset class="fstep" data-step="3">
+        <legend>payment</legend>
+        <div class="pay-grid">
+          <label class="pay-card {{ 'sel' if v.payment == 'cash' or not v.payment }}">
+            <input type="radio" name="payment" value="cash"
+                   {{ 'checked' if v.payment != 'upi' }}>
+            <span class="pay-ic">{{ icon('cash') }}</span>
+            <span class="pay-txt"><span class="pay-name">cash</span>
+            <span class="pay-desc">reserve now, settle with the organizer</span></span>
+          </label>
+          <label class="pay-card {{ 'sel' if v.payment == 'upi' }}">
+            <input type="radio" name="payment" value="upi"
+                   {{ 'checked' if v.payment == 'upi' }}>
+            <span class="pay-ic">{{ icon('qr') }}</span>
+            <span class="pay-txt"><span class="pay-name">upi</span>
+            <span class="pay-desc">scan &amp; pay — fastest way in</span></span>
+          </label>
+        </div>
+        {% if errors.payment %}<p class="f-err">{{ errors.payment }}</p>{% endif %}
+
+        <div class="summary glass" id="summary">
+          <p class="sum-row"><span>pass</span><span id="sum-type">single</span></p>
+          <p class="sum-row"><span>payment</span><span id="sum-pay">cash</span></p>
+          <p class="sum-row total"><span>amount</span><span class="display" id="sum-amt">₹{{ settings.price_single }}</span></p>
+        </div>
+
+        <div class="wnav">
+          <button type="button" class="btn ghost" data-back>← back</button>
+          <button type="submit" class="btn">confirm booking <span aria-hidden="true">→</span></button>
+        </div>
+      </fieldset>
+
+      <noscript><p class="form-note">javascript is off — fill in every section above and press confirm.</p></noscript>
+    </form>
+
+    <p class="mut small center">a unique 4-digit pass code unlocks right after this.</p>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/book.js') }}" defer></script>
+{% endblock %}

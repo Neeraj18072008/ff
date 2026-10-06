@@ -1,0 +1,45 @@
+{% macro icon(n, cls='') -%}
+<svg class="ic {{ cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{%- if n == 'drink' -%}
+<path d="M5 4h14l-7 8z"/><path d="M12 12v7"/><path d="M8 21h8"/>
+{%- elif n == 'starter' -%}
+<path d="M7 3v5M5 3v4M9 3v4M7 8v13"/><ellipse cx="17" cy="6.5" rx="2.6" ry="3.5"/><path d="M17 10v11"/>
+{%- elif n == 'main' -%}
+<path d="M4 17a8 8 0 0 1 16 0"/><path d="M2.5 17h19"/><path d="M12 9V7.5"/><circle cx="12" cy="6.3" r="1.1"/>
+{%- elif n == 'dessert' -%}
+<path d="M4 21h16"/><path d="M5 21v-6a7 5 0 0 1 14 0v6"/><path d="M12 10V8"/><path d="M12 8c1.4-1 1.4-2.6 0-4-1.4 1.4-1.4 3 0 4z"/>
+{%- elif n == 'dance' -%}
+<path d="M9 17V5l10-2v12"/><ellipse cx="6.5" cy="17.5" rx="2.5" ry="2.2"/><ellipse cx="16.5" cy="15.5" rx="2.5" ry="2.2"/>
+{%- elif n == 'camera' -%}
+<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/>
+{%- elif n == 'party' -%}
+<path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7z"/><path d="M18.5 16.5l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z"/>
+{%- elif n == 'pin' -%}
+<path d="M12 21s-7-5.1-7-11a7 7 0 0 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/>
+{%- elif n == 'clock' -%}
+<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
+{%- elif n == 'cal' -%}
+<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>
+{%- elif n == 'arrow' -%}
+<path d="M4 12h15M13 6l6 6-6 6"/>
+{%- elif n == 'lock' -%}
+<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+{%- elif n == 'user' -%}
+<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>
+{%- elif n == 'pass' -%}
+<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M15 6v12" stroke-dasharray="2 3"/>
+{%- elif n == 'cash' -%}
+<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>
+{%- elif n == 'qr' -%}
+<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M20 17v3h-3M14 20h.01"/>
+{%- elif n == 'search' -%}
+<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>
+{%- elif n == 'check' -%}
+<path d="M5 13l4 4L19 7"/>
+{%- elif n == 'warn' -%}
+<path d="M12 3l10 17H2z"/><path d="M12 10v4M12 17.5v.01"/>
+{%- elif n == 'out' -%}
+<path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"/><path d="M15 8l4 4-4 4M9 12h10"/>
+{%- endif -%}
+</svg>
+{%- endmacro %}

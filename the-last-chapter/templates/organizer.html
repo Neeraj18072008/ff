@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% block title %}control room · the last chapter{% endblock %}
+
+{% block body %}
+<main class="section page org-page" id="main">
+  <div class="wrap wide">
+
+    <div class="org-head">
+      <div>
+        <p class="kicker">🖥 restricted</p>
+        <h1 class="page-title">control room</h1>
+      </div>
+      <div class="org-head-right">
+        <span class="org-status"><span class="live-dot"></span> LIVE</span>
+        <span class="org-user mono">{{ org_name }}</span>
+        <form method="post" action="{{ url_for('org_logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn ghost small">{{ icon('out') }} logout</button>
+        </form>
+      </div>
+    </div>
+
+    <nav class="tabs" aria-label="dashboard sections">
+      <a class="{{ 'on' if tab == 'overview' }}" href="{{ url_for('organizer', tab='overview') }}">overview</a>
+      <a class="{{ 'on' if tab == 'verify' }}" href="{{ url_for('organizer', tab='verify') }}">verify pass</a>
+      <a class="{{ 'on' if tab == 'bookings' }}" href="{{ url_for('organizer', tab='bookings') }}">bookings</a>
+      <a class="{{ 'on' if tab == 'codes' }}" href="{{ url_for('organizer', tab='codes') }}">pass codes</a>
+      <a class="{{ 'on' if tab == 'activity' }}" href="{{ url_for('organizer', tab='activity') }}">activity</a>
+      <a class="{{ 'on' if tab == 'settings' }}" href="{{ url_for('organizer', tab='settings') }}">settings</a>
+    </nav>
+
+    {% if tab == 'overview' %}
+    <!-- overview -->
+    <div class="stats">
+      <div class="stat glass"><p class="stat-num display">{{ stats.total }}</p><p class="stat-lab">total bookings</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.single }}</p><p class="stat-lab">single</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.couple }}</p><p class="stat-lab">couple</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.guests }}</p><p class="stat-lab">total guests</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.upi }}</p><p class="stat-lab">upi</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.cash }}</p><p class="stat-lab">cash</p></div>
+      <div class="stat glass span2">
+        <p class="stat-num display">{{ stats.entered }} <span class="dim">/ {{ stats.guests }}</span></p>
+        <p class="stat-lab">entries</p>
+        <div class="bar"><span class="fill" style="width: {{ ((100 * stats.entered / stats.guests) | round(1)) if stats.guests else 0 }}%"></span></div>
+      </div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.paid }}</p><p class="stat-lab">paid bookings</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.pending }}</p><p class="stat-lab">pending payments</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.used }}</p><p class="stat-lab">used passes</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ stats.unused }}</p><p class="stat-lab">unused passes</p></div>
+    </div>
+    <p class="mut small">door tip — use <a href="{{ url_for('organizer', tab='verify') }}">verify pass</a> at the entry desk: code in, guest details out, one tap to allow.</p>
+    {% endif %}
+
+    {% if tab == 'codes' %}
+    <div class="stats">
+      <div class="stat glass"><p class="stat-num display">{{ inventory.total }}</p><p class="stat-lab">total printed</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ inventory.available }}</p><p class="stat-lab">available</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ inventory.assigned }}</p><p class="stat-lab">assigned</p></div>
+      <div class="stat glass"><p class="stat-num display">{{ inventory.used }}</p><p class="stat-lab">used</p></div>
+    </div>
+    <form class="settings glass" method="post" action="{{ url_for('org_codes') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <p class="set-title">pass code inventory</p>
+      <div class="field"><label for="codes">paste printed codes — one per line (exactly 4 digits)</label><textarea id="codes" name="codes" rows="8" class="code-area" placeholder="0001&#10;0002&#10;0003"></textarea></div>
+      <p class="hint">Duplicates and invalid codes are rejected. A single or couple booking reserves one printed pass.</p>
+      <button class="btn">add printed codes</button>
+    </form>
+    {% if codes %}<div class="b-list">{% for c in codes %}<div class="b-row glass"><div class="b-top"><span class="b-code mono">{{ c.code }}</span><span class="chip-mini {{ c.status }}">{{ c.status|upper }}</span></div></div>{% endfor %}</div>{% else %}<p class="mut center">No printed codes yet. Add inventory before accepting bookings.</p>{% endif %}
+    {% endif %}
+
+    {% if tab == 'verify' %}
+    <!-- verify pass -->
+    <div class="verify glass">
+      <p class="v-title">verify pass</p>
+      <div class="v-form">
+        <input id="vCode" class="v-input mono" type="text" inputmode="numeric" maxlength="4"
+               placeholder="••••" autocomplete="off" aria-label="4-digit pass code">
+        <button id="vBtn" class="btn">verify</button>
+      </div>
+      <div id="vResult" class="v-result" aria-live="polite"></div>
+    </div>
+    {% endif %}
+
+    {% if tab == 'bookings' %}
+    <!-- bookings -->
+    <form class="b-search glass" method="get" action="{{ url_for('organizer') }}">
+      <input type="hidden" name="tab" value="bookings">
+      <span class="bs-ic">{{ icon('search') }}</span>
+      <input name="q" value="{{ q }}" placeholder="search name, code or contact…" aria-label="search bookings">
+      <button class="btn ghost small">search</button>
+    </form>
+
+    <div class="chips">
+      {% for c in chips %}
+      <a class="chip-btn {{ 'on' if c.active }}" href="{{ c.href }}">{{ c.label }}</a>
+      {% endfor %}
+    </div>
+
+    {% if rows %}
+    <div class="b-list">
+      {% for b in rows %}
+      <div class="b-row glass">
+        <div class="b-top">
+          <span class="b-code mono">{{ b.pass_code }}</span>
+          <span class="chip-btn static">{{ 'couple' if b.pass_type == 'couple' else 'single' }}</span>
+          <span class="chip-btn static">{{ b.payment_method }}</span>
+          <span class="chip-mini {{ b.payment_status }}">{{ 'PAID' if b.payment_status == 'paid' else ('VERIFYING' if b.payment_status == 'submitted' else 'PENDING') }}</span>
+        </div>
+        <p class="b-names">{{ b.person_1_name }}{% if b.person_2_name %} <span class="dim">+</span> {{ b.person_2_name }}{% endif %}</p>
+        <p class="b-meta mono">📞 {{ b.contact }} · ₹{{ b.amount }} · booked {{ b.created_at | day_time }}</p>
+        <div class="b-bottom">
+          <span class="chip-mini {{ 'used' if b.entry_status == 'used' else 'unused' }}">{{ 'USED ' ~ (b.entry_time | time_of) if b.entry_status == 'used' else 'UNUSED' }}</span>
+          {% if b.payment_status != 'paid' %}
+          <button class="btn ghost small mark-paid" data-code="{{ b.pass_code }}">mark payment received ✓</button>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="mut center">no bookings match.</p>
+    {% endif %}
+    {% endif %}
+
+    {% if tab == 'activity' %}
+    <!-- activity -->
+    <div class="feed glass">
+      {% if logs %}
+      {% for l in logs %}
+      <p class="feed-row"><span class="mono dim">{{ l.created_at | day_time }}</span><span class="feed-dot {{ l.action }}"></span>{{ l.detail }}</p>
+      {% endfor %}
+      {% else %}
+      <p class="mut center">nothing yet — book some passes and watch this fill up.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if tab == 'settings' %}
+    <!-- settings -->
+    {% if pw_default %}
+    <div class="form-note warn">you're still on the default password — change it below before the event.</div>
+    {% endif %}
+
+    <form class="settings glass" method="post" action="{{ url_for('org_settings') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <p class="set-title">passes &amp; payment</p>
+      <div class="set-grid">
+        <div class="field">
+          <label for="price_single">single pass price (₹)</label>
+          <input id="price_single" name="price_single" type="number" min="0" value="{{ settings.price_single }}">
+        </div>
+        <div class="field">
+          <label for="price_couple">couple pass price (₹)</label>
+          <input id="price_couple" name="price_couple" type="number" min="0" value="{{ settings.price_couple }}">
+        </div>
+        <div class="field">
+          <label for="upi_id_single">upi id · single (QR 1)</label>
+          <input id="upi_id_single" name="upi_id_single" type="text" value="{{ settings.upi_id_single }}" placeholder="name@bank">
+        </div>
+        <div class="field">
+          <label for="upi_id_couple">upi id · couple (QR 2)</label>
+          <input id="upi_id_couple" name="upi_id_couple" type="text" value="{{ settings.upi_id_couple }}" placeholder="name@bank">
+        </div>
+        <div class="field span2">
+          <label for="payee_name">payee name (shows in upi apps)</label>
+          <input id="payee_name" name="payee_name" type="text" value="{{ settings.payee_name }}">
+        </div>
+      </div>
+      <p class="hint">the two QR codes are generated from these UPI ids, with the correct amount prefilled per pass type.</p>
+      <button class="btn">save settings</button>
+    </form>
+
+    <form class="settings glass" method="post" action="{{ url_for('org_password') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <p class="set-title">change password</p>
+      <div class="set-grid">
+        <div class="field">
+          <label for="cur_pw">current password</label>
+          <input id="cur_pw" name="current" type="password" autocomplete="current-password">
+        </div>
+        <div class="field">
+          <label for="new_pw">new password (min 8)</label>
+          <input id="new_pw" name="new" type="password" autocomplete="new-password">
+        </div>
+      </div>
+      <button class="btn">update password</button>
+    </form>
+    {% endif %}
+
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/organizer.js') }}" defer></script>
+{% endblock %}

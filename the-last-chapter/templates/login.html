@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% block title %}organizer access · the last chapter{% endblock %}
+
+{% block body %}
+<main class="section page login-page" id="main">
+  <div class="wrap narrow">
+
+    <div class="login-card glass" data-reveal>
+      <div class="login-emblem">
+        <img src="{{ url_for('static', filename='img/panther-pass.jpg') }}" alt="">
+      </div>
+      <p class="lc-title display">THE LAST CHAPTER</p>
+      <p class="lc-sub"><span class="ic">{{ icon('lock') }}</span> organizer access</p>
+
+      {% if error %}<div class="form-note err" role="alert">{{ error }}</div>{% endif %}
+
+      <form method="post" action="{{ url_for('org_login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field">
+          <label for="username">username</label>
+          <input id="username" name="username" type="text" autocomplete="username" autofocus>
+        </div>
+        <div class="field">
+          <label for="password">password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password">
+        </div>
+        <button class="btn wide">login</button>
+      </form>
+    </div>
+
+    <p class="mut small center">restricted area — crew only.</p>
+  </div>
+</main>
+{% endblock %}

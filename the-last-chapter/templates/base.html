@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030303">
+<meta name="description" content="the last chapter — Farewell 2026. 3 November 2026 · PITCHERS, DB City Mall, Bhopal · 7 PM—12 AM. Book your pass.">
+<title>{% block title %}the last chapter · 03.11.2026{% endblock %}</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23030303'/%3E%3Cellipse cx='21' cy='34' rx='8' ry='5' fill='%23E00000'/%3E%3Cellipse cx='43' cy='34' rx='8' ry='5' fill='%23E00000'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+<a class="skip" href="#main">skip to content</a>
+
+<header class="topbar" id="topbar">
+  <a class="brand" href="{{ url_for('index') }}">
+    <span class="brand-eyes" aria-hidden="true"><i></i><i></i></span>
+    <span>the last chapter</span>
+  </a>
+  <nav class="menu">
+    <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-label="more options">⋮</button>
+    <div class="menu-drop" id="menuDrop" hidden>
+      <a href="{{ url_for('book_page') }}">book your pass →</a>
+      <a href="{{ url_for('org_login') }}" class="dim">organizer</a>
+    </div>
+  </nav>
+</header>
+
+{% with msgs = get_flashed_messages(with_categories=true) %}
+  {% if msgs %}
+  <div class="flashes" role="status">
+    {% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
+
+{% block body %}{% endblock %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

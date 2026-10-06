@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}pay ₹{{ p.amount }} · the last chapter{% endblock %}
+
+{% block body %}
+<main class="section page" id="main">
+  <div class="wrap narrow">
+
+    <p class="kicker">almost there</p>
+    <h1 class="page-title">pay ₹{{ p.amount }}</h1>
+    <p class="lead serif">scan. pay. unlock your pass.</p>
+
+    <div class="qr-card" data-reveal>
+      <div class="qr-box">{{ qr | safe }}</div>
+    </div>
+
+    <div class="pay-details glass" data-reveal>
+      <p class="sum-row"><span>pass</span><span>{{ 'couple' if p.type == 'couple' else 'single' }}</span></p>
+      <p class="sum-row"><span>amount</span><span class="display">₹{{ p.amount }}</span></p>
+      <p class="sum-row"><span>upi id</span><span class="mono small">{{ upi_id }}</span></p>
+      <p class="sum-row"><span>payee</span><span>{{ settings.payee_name }}</span></p>
+    </div>
+
+    <a class="btn ghost wide" href="{{ uri }}" id="upiLink">open in a upi app <span aria-hidden="true">→</span></a>
+
+    <form method="post" action="{{ url_for('pay_done', token=token) }}" class="pay-done">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn wide">payment done ✓ — show my pass</button>
+    </form>
+
+    <p class="mut small center">your 4-digit code unlocks the moment you confirm. the organizer verifies the payment at the door — keep the screenshot of your payment handy.</p>
+  </div>
+</main>
+{% endblock %}

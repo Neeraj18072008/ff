@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% block body %}
+<main id="main">
+
+  <!-- 01 · opening / hero -->
+  <section class="hero" id="top">
+    <div class="hero-media" aria-hidden="true">
+      <img class="hero-img" src="{{ url_for('static', filename='img/panther-hero.jpg') }}" alt="">
+      <div class="hero-veil"></div>
+      <div class="smoke s1"></div>
+      <div class="smoke s2"></div>
+      <div class="particles">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+    <div class="hero-inner">
+      <p class="kicker" data-hero="1">FAREWELL 2026</p>
+      <p class="hero-line serif" data-hero="1">they say every story ends with a</p>
+      <h1 class="hero-title display" data-hero="2">LAST CHAPTER<span class="dot">.</span></h1>
+      <p class="hero-line serif" data-hero="3">ours ends here — but this is where a new, bigger story begins.</p>
+      <a class="btn hero-cta" data-hero="4" data-scroll href="#gathering">enter the chapter <span aria-hidden="true">→</span></a>
+    </div>
+    <a class="hero-scroll" data-scroll href="#gathering" aria-label="scroll down"><span></span></a>
+  </section>
+
+  <!-- 02 · the final gathering -->
+  <section class="section" id="gathering">
+    <div class="wrap">
+      <p class="kicker" data-reveal>01 · save the date</p>
+      <h2 data-reveal>the final gathering</h2>
+      <p class="lead serif" data-reveal>one night, the whole crew, one room — good food, loud music and a proper send-off before everyone writes their next chapter.</p>
+      <div class="event-card glass" data-reveal>
+        <div class="ev-row"><span class="ev-ic">{{ icon('cal') }}</span><p class="ev-big display">{{ EVENT.date_long }}</p></div>
+        <div class="ev-row"><span class="ev-ic">{{ icon('clock') }}</span><p class="ev-mid mono">{{ EVENT.time_range }}</p></div>
+        <div class="ev-row"><span class="ev-ic">{{ icon('pin') }}</span><p class="ev-mid">{{ EVENT.venue }} — {{ EVENT.venue_sub }}</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · what awaits you -->
+  <section class="section" id="awaits">
+    <div class="wrap wide">
+      <p class="kicker" data-reveal>02 · the spread &amp; the spirit</p>
+      <h2 data-reveal>what awaits you</h2>
+      <div class="grid cards">
+        {% for ic, title, line in AWAITS %}
+        <div class="card glass" data-reveal>
+          <span class="card-ic">{{ icon(ic) }}</span>
+          <p class="card-title">{{ title }}</p>
+          <p class="card-line">{{ line }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · the night -->
+  <section class="section" id="night">
+    <div class="wrap">
+      <p class="kicker" data-reveal>03 · running order</p>
+      <h2 data-reveal>the night</h2>
+      <ol class="timeline">
+        {% for t, label in TIMELINE %}
+        <li data-reveal>
+          <span class="tl-time mono">{{ t }}</span>
+          <span class="tl-node" aria-hidden="true"></span>
+          <span class="tl-label">{{ label }}</span>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 05 · same people. same vibes. new journeys. -->
+  <section class="vibes" id="vibes">
+    <div class="vibes-media" aria-hidden="true">
+      <img src="{{ url_for('static', filename='img/panther-prowl.jpg') }}" alt="">
+      <div class="vibes-veil"></div>
+    </div>
+    <div class="vibes-inner">
+      <p class="kicker" data-reveal>04 · the theme</p>
+      <p class="vibes-line display" data-reveal>SAME PEOPLE.</p>
+      <p class="vibes-line display" data-reveal>SAME VIBES.</p>
+      <p class="vibes-line display accent" data-reveal>NEW JOURNEYS.</p>
+      <p class="serif vibes-sub" data-reveal>same crew. same energy. different roads ahead.</p>
+    </div>
+  </section>
+
+  <!-- 06 · venue -->
+  <section class="section" id="venue">
+    <div class="wrap">
+      <p class="kicker" data-reveal>05 · the location</p>
+      <h2 data-reveal>where we meet</h2>
+      <div class="venue-card glass" data-reveal>
+        <p class="venue-name display">{{ EVENT.venue }}</p>
+        <p class="venue-sub">{{ EVENT.venue_sub }}</p>
+        <div class="venue-meta mono">
+          <p>{{ EVENT.date_long }}</p>
+          <p>{{ EVENT.time_range }}</p>
+        </div>
+        <a class="btn ghost wide-sm" href="{{ EVENT.maps }}" target="_blank" rel="noopener">get directions <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · dress code -->
+  <section class="section" id="dress">
+    <div class="wrap narrow">
+      <p class="kicker" data-reveal>06 · what to wear</p>
+      <h2 data-reveal>dress code</h2>
+      <div class="dress-card glass" data-reveal>
+        <p class="dress-big display">CASUAL &amp; COMFORTABLE</p>
+        <p class="mut">come as you are — just be ready to dance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · countdown -->
+  <section class="section" id="countdown">
+    <div class="wrap">
+      <p class="kicker" data-reveal>07 · don't be late</p>
+      <h2 data-reveal>the clock is running</h2>
+      <div class="count glass" data-reveal data-deadline="{{ EVENT.date_iso }}">
+        <div class="cell"><p class="num mono" id="cd-d">--</p><p class="lab">days</p></div>
+        <div class="cell"><p class="num mono" id="cd-h">--</p><p class="lab">hours</p></div>
+        <div class="cell"><p class="num mono" id="cd-m">--</p><p class="lab">minutes</p></div>
+        <div class="cell"><p class="num mono" id="cd-s">--</p><p class="lab">seconds</p></div>
+      </div>
+      <p class="count-note mut" data-reveal>{{ EVENT.venue }} · {{ EVENT.date_long }} · doors at 7:00 pm</p>
+    </div>
+  </section>
+
+  <!-- 09 · ready? -->
+  <section class="ready" id="ready">
+    <div class="ready-media" aria-hidden="true">
+      <img src="{{ url_for('static', filename='img/panther-hero.jpg') }}" alt="">
+      <div class="ready-veil"></div>
+    </div>
+    <div class="ready-inner">
+      <p class="ready-title serif">ready?</p>
+      <p class="ready-sub serif">the final chapter is waiting.</p>
+      <a class="btn ready-cta" href="{{ url_for('book_page') }}">book your pass <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="mono">🐈‍⬛ the last chapter · a farewell by the crew, for the crew</p>
+    <p class="mut">{{ EVENT.date_dot }} · {{ EVENT.venue|lower }}, db city mall, bhopal</p>
+  </footer>
+
+</main>
+{% endblock %}

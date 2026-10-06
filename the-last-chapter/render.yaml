@@ -1,0 +1,23 @@
+# render.com blueprint — THE LAST CHAPTER
+services:
+  - type: web
+    name: the-last-chapter
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.14
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ORGANIZER_NEERAJ_PASSWORD
+        sync: false
+      - key: ORGANIZER_ARYAN_PASSWORD
+        sync: false
+      - key: ORGANIZER_MOHIT_PASSWORD
+        sync: false
+    disk:                     # keeps the sqlite db + secret key across deploys
+      name: last-chapter-data
+      mountPath: /opt/render/project/src/instance
+      sizeGB: 1

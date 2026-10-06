@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ code }} · the last chapter{% endblock %}
+
+{% block body %}
+<main class="section page" id="main">
+  <div class="wrap narrow center">
+    <p class="kicker">{{ code }}</p>
+    <h1 class="page-title">{{ title }}</h1>
+    <p class="lead serif">{{ msg }}</p>
+    <a class="btn" href="{{ url_for('index') }}">back to the chapter <span aria-hidden="true">→</span></a>
+  </div>
+</main>
+{% endblock %}
